@@ -1,0 +1,29 @@
+name: Auto Contribute
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at 00:00 UTC every day
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  contribute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+      
+      - name: Create contribution
+        run: |
+          # Create a new file with timestamp
+          echo "Auto contribution on $(date)" > contributions/contribution-$(date +%Y-%m-%d).md
+          
+          # Add and commit the changes
+          git add contributions/contribution-$(date +%Y-%m-%d).md
+          git commit -m "chore: Add auto contribution for $(date +%Y-%m-%d)"
+          git push 
